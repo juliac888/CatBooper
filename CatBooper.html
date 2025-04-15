@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cat Booper</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* No Scrolling allowed :] */
+      font-family: 'Courier New', monospace;
+      font-size: 2.25vw;
+    }
+
+    /* full-screen background */
+    body {
+      background-image: url("Background.PNG");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    /* Start screen overlay */
+    #start-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 56.25vw;
+      background-image: url("StartScreen.PNG");
+      background-repeat: no-repeat;
+      background-size: 75vw auto;  
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: opacity .5s ease;
+    }
+
+    #start-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #start-screen button {
+      position: absolute;
+      bottom: 15%;
+      padding: 0;
+      border: none;
+      background: url("PlayButton.PNG") no-repeat center center; 
+      background-size: cover; 
+      width: 12.1vw;
+      height: 5.61vw; 
+      cursor: pointer;
+    }
+
+    #start-screen button:hover {
+      transform: scale(1.05); /* Increase button size */
+    }
+
+    /* Game content */
+    #boop-content {
+      display: none;
+      text-align: center;
+      padding: 1px;
+    }
+
+    #boop-content.show {
+      display: block;
+      animation: fadeIn .5s ease;
+    }
+
+    #button-animation {
+      position: fixed;
+      width: 60vw; 
+      right: 20vw;
+      height: auto;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* Game overlay image in the center */
+    #boop-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 56.25vw;
+      background-image: url("BoopBG.PNG"); 
+      background-size: 75vw auto;  
+      background-repeat: no-repeat;
+      background-position: center;
+      pointer-events: none; 
+      z-index: 2;
+    }
+
+    /* Game text content */
+    #boop-ui {
+      position: relative;
+      z-index: 5;
+      padding-top: 0;
+    }
+
+    #boop-button {
+      position: relative;
+      top: 35vw;
+      padding: 0;
+      border: none;
+      background: url("BoopButton.PNG") no-repeat center center; 
+      background-size: cover; 
+      width: 12.1vw;
+      height: 5.61vw;
+      cursor: pointer;
+    }
+
+    #boop-button:hover {
+      transform: scale(1.05);
+    }
+
+    #counter {
+      position: fixed;         
+      text-align: center;
+      transform: translateX(50%);
+      top: 7.6vw;               
+      right: 39.4vw;            
+      padding: 0;
+      border-radius: 8px;
+      z-index: 10;             
+      pointer-events: none;   
+    }
+
+    #milestone-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0); 
+      display: flex; 
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.9);
+      transition: transform 0.2s ease;
+    }
+
+    #milestone-overlay.show {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    #milestone-box {
+      position: fixed;
+      top: 11vw;
+      right: 35.5vw;
+      width: 29vw;
+      height: 32vw;
+      background-image: url("MilestoneBG.PNG");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+    }
+
+    #milestone-text {
+      position: fixed;
+      top: 0;
+      left: 7.5vw;
+      width: 85vw;
+      height: 56.25vw;
+      height: auto;
+      pointer-events: none;
+    }
+
+    #milestone-animation {
+      position: fixed;
+      top: 7vw;
+      width: 60vw; 
+      right: 20vw;
+      height: auto;
+      pointer-events: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glow-on-click {
+      filter: brightness(1.1);
+    }
+  </style>
+</head>
+<body>
+  <!-- Start Screen -->
+  <div id="start-screen">
+    <button onclick="startGame()"></button>
+  </div>
+
+  <!-- Game Content -->
+  <div id="boop-content">
+    <div id="boop-screen"></div>
+    <div id="boop-ui">
+      <div><span id="counter">0</span></div>
+      <button id="boop-button"></button>
+    </div>
+    <img id="button-animation" src="Cat1.PNG" />
+    <div id="milestone-overlay">
+        <div id="milestone-box"></div>
+        <img id="milestone-text" src="10Text.PNG"/>
+        <img id="milestone-animation" src="10frame1.PNG" />
+    </div>
+  </div>
+
+  <script>
+    function startGame() {
+      const startScreen = document.getElementById('start-screen');
+      const gameContent = document.getElementById('boop-content');
+
+      startScreen.classList.add('hidden');
+
+      startScreen.addEventListener('transitionend', () => {
+        gameContent.classList.add('show');
+      }, { once: true });
+    }
+
+    function showMilestoneOverlay() {
+      const overlay = document.getElementById('milestone-overlay');
+      overlay.classList.add('show');
+    }
+
+    function hideMilestoneOverlay() {
+      const overlay = document.getElementById('milestone-overlay');
+      overlay.classList.remove('show');
+    }
+
+    //Fancy Button Stuff
+    const buttons = document.querySelectorAll('button');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Add glow effect to the clicked button
+        button.classList.add('glow-on-click');
+
+        // Remove glow effect after 50ms 
+        setTimeout(() => {
+          button.classList.remove('glow-on-click');
+        }, 200);
+      });
+    });
+
+    //animation frames for button and rewards
+    const buttonPressFrames = ["Cat2.PNG", "Cat1.PNG"];
+    const milestone10 = ["10frame1.PNG", "10frame2.PNG", "10frame3.PNG"];
+    const milestone50 = ["10frame1.PNG", "50frame2.PNG", "50frame3.PNG"];
+    const milestone100 = ["100frame1.PNG", "100frame2.PNG", "100frame3.PNG"];
+    const milestone200 = ["200frame1.PNG", "200frame2.PNG", "200frame3.PNG"];
+
+    //animation stuff
+    function playFrameAnimation(frames, lastFrameIndex, elementId) {
+      const anim = document.getElementById(elementId);
+      let index = 0;
+
+      anim.style.display = 'block';
+      const interval = setInterval(() => {
+          if (index < frames.length) {
+            anim.src = frames[index];
+          } else {
+            clearInterval(interval);
+            anim.src = frames[lastFrameIndex]; 
+          }
+          index++;
+      }, 200); // 5fps
+    }
+
+    const milestoneOverlay = document.getElementById("milestone-overlay");
+    const milestoneText = document.getElementById("milestone-text");
+    const milestoneAnim = document.getElementById("milestone-animation");
+
+    //Counter Logic
+    let counter = 0;
+
+    document.getElementById('boop-button').addEventListener('click', () => {
+      playFrameAnimation(buttonPressFrames, 1, "button-animation");
+      counter++;
+      document.getElementById('counter').textContent = counter;
+
+      if(counter === 10) {
+        showMilestoneOverlay();
+        playFrameAnimation(milestone10, 2, "milestone-animation");
+      } else if (counter === 50) {
+        showMilestoneOverlay();
+        playFrameAnimation(milestone50, 2, "milestone-animation");
+      } else if (counter === 100) {
+        showMilestoneOverlay();
+        playFrameAnimation(milestone100, 2, "milestone-animation");
+      } else if (counter == 200) {
+        showMilestoneOverlay();
+        playFrameAnimation(milestone200, 2, "milestone-animation");
+      }
+    });
+
+    //milestone popup removal
+    milestoneOverlay.addEventListener('click', (e) => {
+      const milestoneBox = document.getElementById('milestone-box');
+      if (!milestoneBox.contains(e.target)) {
+        hideMilestoneOverlay();
+        if (counter === 10) {
+            milestoneText.src = "50Text.PNG";
+            milestoneAnim.src = "10frame1.PNG";
+        } else if (counter === 50) {
+            milestoneText.src = "100Text.PNG";
+            milestoneAnim.src = "100frame1.PNG";
+        } else if (counter === 100) {
+            milestoneText.src = "200Text.PNG";
+            milestoneAnim.src = "200frame1.PNG";
+        }
+      }
+    });
+  </script>
+</body>
+</html>
